@@ -2,13 +2,14 @@ import React, {useState} from 'react';
 import './App.css';
 import {Todolist} from './components/TodoList';
 import {v1} from 'uuid';
+import AddItem from "./AddItem";
 
 export type TaskType = {
     id: string
     title: string
     isDone: boolean
 }
-type TodoListType = {
+type BlockType = {
     id: string
     title: string
     filter: FilterValuesType
@@ -23,7 +24,7 @@ function App() {
 
     const block1 = v1(), block2 = v1(), block3 = v1()  // создаём блоки с id , что бы связать блок с тасками #32
 
-    const [blocks, setBlocks] = useState<Array<TodoListType>>([ // лок стейт для блоков
+    const [blocks, setBlocks] = useState<Array<BlockType>>([ // лок стейт для блоков
         {id: block1, title: "first block ", filter: 'all'},
         {id: block2, title: "second block ", filter: 'active'},
         {id: block3, title: "third block ", filter: 'completed'}
@@ -52,20 +53,20 @@ function App() {
         ]
     })
 
+    function addTask     (blockID: string, title: string) {//добавляем block или task
+        let newTask: TaskType = {
+            id: v1(),
+            title: title,
+            isDone: false
+        };
+        const block = tasks[blockID]
+        tasks[blockID] = [newTask, ...block];
+        setTasks({...tasks});
+    }
     function removeTask  (blockID: string, taskID: string) {        // удаляем таску в блоке
         const blockCopy = tasks[blockID]                            // создаём копию блока по id
         tasks[blockID] = blockCopy.filter(t => t.id !== taskID);    // меняем ориг.блок на блок c удалённой таской
         setTasks({...tasks});                                 // сетаем копию ориг.блок
-    }
-    function addTask     (blockID: string, title: string) {//добавляем таску в опред туду
-        let newTask: TaskType = {
-                id: v1(),
-                title: title,
-                isDone: false
-            };
-        const todoListTasks = tasks[blockID]
-        tasks[blockID] = [newTask, ...todoListTasks];
-        setTasks({...tasks});
     }
     function changeFilter(blockID: string, newFilterValue:FilterValuesType) {
 
@@ -83,19 +84,47 @@ function App() {
             setTasks({...tasks})
         }
     }
+    function addBlock(title: string){
+        const newBlockID = v1();
+        const newBlock:BlockType = {
+            id : newBlockID,
+            title: title,
+            filter: 'all'
+        }
+        setBlocks([newBlock, ...blocks])
+        setTasks({...tasks, [newBlockID]: []})
+    }
     function removeBlock (blockID: string){
         setBlocks(blocks.filter(tdl => tdl.id !== blockID)) // удаляем бок и сэтаем стэйт
         delete tasks[blockID]                               // удаление данных их реального стейта а не из виртуального
         setTasks({...tasks})
     }
+    function changeTaskTitle(blockID: string, taskId: string, title: string) {
+        const todoListTasks = tasks[blockID]
+        const task: TaskType | undefined = todoListTasks.find(t => t.id === taskId)
+        if (task) {
+            task.title = title
+            setTasks({...tasks})
+        }
+    }
+    function changeBlockTitle(blockID: string, title: string){
+        const block =  blocks.find(b=>b.id===blockID)
+        if(block){
+            block.title = title
+            setTasks({...tasks})
+        }
+    }
 
     return (
         <div className="App">
+            <AddItem addItem={addBlock}/>              {/*  создаём новый блок*/}
+
             {
                 blocks.map(tdl => {                     // фильтруем по корневым блокам
                     let taskForTodoList = tasks[tdl.id] // фильтруем блоки и устанавливам фильтры
                     if(tdl.filter === "active")   {taskForTodoList = tasks[tdl.id].filter(t => t.isDone === false)}
                     if(tdl.filter === "completed"){taskForTodoList = tasks[tdl.id].filter(t => t.isDone === true)}
+
                     return (
                         <Todolist key={tdl.id}
                                   id={tdl.id}
@@ -106,7 +135,9 @@ function App() {
                                   changeFilter={changeFilter}
                                   addTask={addTask}
                                   changeStatus={changeStatus}
-                                  removeBlock={removeBlock}/>
+                                  removeBlock={removeBlock}
+                                  changeTaskTitle={changeTaskTitle}
+                                  changeBlockTitle={changeBlockTitle}/>
                     )
                 })
             }

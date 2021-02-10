@@ -1,9 +1,9 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
 
-type AddBlockPropsType = {
+type AddItemPropsType = {
     addItem: (title: string) => void
 }
-function AddBlock(props: AddBlockPropsType) {
+function AddItem(props: AddItemPropsType) {
 
     let [title, setTitle] = useState("")
     let [error, setError] = useState<string | null>(null)
@@ -37,4 +37,4 @@ function AddBlock(props: AddBlockPropsType) {
     )
 }
 
-export default AddBlock
+export default AddItem

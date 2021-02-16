@@ -3,6 +3,8 @@ import './App.css';
 import {Todolist} from './components/TodoList';
 import {v1} from 'uuid';
 import AddItem from "./AddItem";
+import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
+import {Menu} from "@material-ui/icons";
 
 export type TaskType = {
     id: string
@@ -117,30 +119,54 @@ function App() {
 
     return (
         <div className="App">
-            <AddItem addItem={addBlock}/>              {/*  создаём новый блок*/}
 
-            {
-                blocks.map(tdl => {                     // фильтруем по корневым блокам
-                    let taskForTodoList = tasks[tdl.id] // фильтруем блоки и устанавливам фильтры
-                    if(tdl.filter === "active")   {taskForTodoList = tasks[tdl.id].filter(t => t.isDone === false)}
-                    if(tdl.filter === "completed"){taskForTodoList = tasks[tdl.id].filter(t => t.isDone === true)}
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" aria-label="menu">
+                        <Menu/>
+                    </IconButton>
+                    <Typography variant="h6" >
+                        News
+                    </Typography>
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
 
-                    return (
-                        <Todolist key={tdl.id}
-                                  id={tdl.id}
-                                  title={tdl.title}
-                                  tasks={taskForTodoList} // прокидываем тудулист данные
-                                  filter={tdl.filter}
-                                  removeTask={removeTask}
-                                  changeFilter={changeFilter}
-                                  addTask={addTask}
-                                  changeStatus={changeStatus}
-                                  removeBlock={removeBlock}
-                                  changeTaskTitle={changeTaskTitle}
-                                  changeBlockTitle={changeBlockTitle}/>
-                    )
-                })
-            }
+            <Container fixed style={{padding: "20px"}}>
+                <Grid container>
+                    <AddItem addItem={addBlock}/> {/*  создаём новый блок*/}
+                </Grid>
+
+                <Grid container spacing={4}>
+                    {
+                        blocks.map(tdl => {                     // фильтруем по корневым блокам
+                            let taskForTodoList = tasks[tdl.id] // фильтруем блоки и устанавливам фильтры
+                            if(tdl.filter === "active")   {taskForTodoList = tasks[tdl.id].filter(t => t.isDone === false)}
+                            if(tdl.filter === "completed"){taskForTodoList = tasks[tdl.id].filter(t => t.isDone === true)}
+
+                            return (
+                                <Grid item key={tdl.id}>
+                                    <Paper elevation={2} style={{padding:"15px"}}>
+                                        <Todolist
+                                            id={tdl.id}
+                                            title={tdl.title}
+                                            tasks={taskForTodoList} // прокидываем тудулист данные
+                                            filter={tdl.filter}
+                                            removeTask={removeTask}
+                                            changeFilter={changeFilter}
+                                            addTask={addTask}
+                                            changeStatus={changeStatus}
+                                            removeBlock={removeBlock}
+                                            changeTaskTitle={changeTaskTitle}
+                                            changeBlockTitle={changeBlockTitle}
+                                        />
+                                    </Paper>
+                                </Grid>
+                            )
+                        })
+                    }
+                </Grid>
+            </Container>
         </div>
     );
 }

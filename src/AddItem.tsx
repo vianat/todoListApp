@@ -37,7 +37,7 @@ function AddItem(props: AddItemPropsType) {
                 error={!!error}
                 helperText={error}
             />
-            <Button onClick={addItem} variant={"contained"} color={"default"}>+</Button>
+            <Button onClick={addItem} variant={"contained"} color={"default"} style={{margin:"15px"}}>+</Button>
         </div>
     )
 }

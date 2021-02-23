@@ -11,15 +11,14 @@ export type TaskType = {
     title: string
     isDone: boolean
 }
-type BlockType = {
+export type BlockType = {
     id: string
     title: string
     filter: FilterValuesType
 }
-type TaskStateType = {
+export type TaskStateType = {
     [key: string]: Array<TaskType>
 }
-
 export type FilterValuesType = "all" | "active" | "completed";
 
 function App() {
@@ -70,7 +69,7 @@ function App() {
         tasks[blockID] = blockCopy.filter(t => t.id !== taskID);    // меняем ориг.блок на блок c удалённой таской
         setTasks({...tasks});                                 // сетаем копию ориг.блок
     }
-    function changeFilter(blockID: string, newFilterValue:FilterValuesType) {
+    function changeBlockFilter(blockID: string, newFilterValue:FilterValuesType) {
 
         const block = blocks.find(tl => tl.id === blockID) // достаём блок по id и меняем фильтр
         if (block) {
@@ -153,7 +152,7 @@ function App() {
                                             tasks={taskForTodoList} // прокидываем тудулист данные
                                             filter={tdl.filter}
                                             removeTask={removeTask}
-                                            changeFilter={changeFilter}
+                                            changeFilter={changeBlockFilter}
                                             addTask={addTask}
                                             changeStatus={changeStatus}
                                             removeBlock={removeBlock}

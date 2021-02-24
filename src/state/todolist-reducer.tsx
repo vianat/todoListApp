@@ -5,7 +5,8 @@ import React, {useState} from 'react';
 type AddBlockActiontype = { type: "ADD_BLOCK", title: string }
 type RemoveBlockActiontype = { type: "REMOVE_BLOCK", blockID: string }
 type ChangeBlockFilterActiontype = { type: "CHANGE_BLOCK_FILTER", blockID: string, newFilter: FilterValuesType }
-type AllActionsType = AddBlockActiontype | RemoveBlockActiontype | ChangeBlockFilterActiontype
+type ChangeBlockTitleActiontype = { type: "CHANGE_BLOCK_TITLE", blockID: string, newTitle: string }
+type AllActionsType = AddBlockActiontype | RemoveBlockActiontype | ChangeBlockFilterActiontype | ChangeBlockTitleActiontype
 
 export const todolistReducer = (state: Array<BlockType>, action: AllActionsType): Array<BlockType> => {
 
@@ -43,11 +44,16 @@ export const todolistReducer = (state: Array<BlockType>, action: AllActionsType)
 
         case "ADD_BLOCK": return [...state, {id : v1(), title: action.title, filter: 'all'}]
 
-        case "REMOVE_BLOCK": return state.filter(tdl => tdl.id !== action.blockID);
+        case "REMOVE_BLOCK": return state.filter(b => b.id !== action.blockID);
 
         case "CHANGE_BLOCK_FILTER":
             const block =  state.find(b=>b.id === action.blockID)
             if(block){ block.filter = action.newFilter}
+            return [...state]
+
+        case "CHANGE_BLOCK_TITLE":
+            const oneblock =  state.find(b=>b.id === action.blockID)
+            if(oneblock){ oneblock.title = action.newTitle}
             return [...state]
 
         default: throw  new Error("wrong action")
@@ -58,4 +64,7 @@ export const AddBlockAC = (title: string): AddBlockActiontype => {return {type: 
 export const RemoveBlockAC = (blockID: string): RemoveBlockActiontype => {return {type: "REMOVE_BLOCK", blockID: blockID}}
 export const ChangeBlockFilterAC = (blockID: string, newFilter: FilterValuesType): ChangeBlockFilterActiontype => {
     return {type: "CHANGE_BLOCK_FILTER", blockID: blockID, newFilter: newFilter}
+}
+export const ChangeBlockTitleAC = (blockID: string, newTitle: string): ChangeBlockTitleActiontype => {
+    return {type: "CHANGE_BLOCK_TITLE", blockID: blockID, newTitle: newTitle}
 }

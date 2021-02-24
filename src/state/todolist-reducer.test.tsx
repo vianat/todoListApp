@@ -1,4 +1,4 @@
-import {AddBlockAC, ChangeBlockFilterAC, RemoveBlockAC, todolistReducer} from "./todolist-reducer";
+import {AddBlockAC, ChangeBlockFilterAC, ChangeBlockTitleAC, RemoveBlockAC, todolistReducer} from "./todolist-reducer";
 import {v1} from "uuid";
 import {useState} from 'react';
 import {BlockType} from "../App";
@@ -27,9 +27,16 @@ test("todolist reducer remove block", () => {
     expect(newState.length).toBe(2)
 })
 
-test("todolist reducer change block title", () => {
+test("todolist reducer change block filter", () => {
     const newFilter = "completed"
 
     const newState = todolistReducer(initialState, ChangeBlockFilterAC(block3,newFilter))
     expect(newState[2].filter).toBe(newFilter)
 })
+test("todolist reducer change block title", () => {
+    const newTitle = "new title"
+    const newState = todolistReducer(initialState, ChangeBlockTitleAC(block3,newTitle))
+    expect(newState[2].title).toBe(newTitle)
+})
+
+

@@ -69,14 +69,6 @@ function App() {
         tasks[blockID] = blockCopy.filter(t => t.id !== taskID);    // меняем ориг.блок на блок c удалённой таской
         setTasks({...tasks});                                 // сетаем копию ориг.блок
     }
-    function changeBlockFilter(blockID: string, newFilterValue:FilterValuesType) {
-
-        const block = blocks.find(tl => tl.id === blockID) // достаём блок по id и меняем фильтр
-        if (block) {
-            block.filter = newFilterValue
-            setBlocks([...blocks])
-        }
-    }
     function changeStatus(blockID: string, taskId: string, isDone: boolean) {
         const todoListTasks = tasks[blockID]
         const task: TaskType| undefined = todoListTasks.find(t => t.id === taskId)
@@ -85,6 +77,15 @@ function App() {
             setTasks({...tasks})
         }
     }
+    function changeTaskTitle(blockID: string, taskId: string, title: string) {
+        const todoListTasks = tasks[blockID]
+        const task: TaskType | undefined = todoListTasks.find(t => t.id === taskId)
+        if (task) {
+            task.title = title
+            setTasks({...tasks})
+        }
+    }
+
     function addBlock(title: string){
         const newBlockID = v1();
         const newBlock:BlockType = {
@@ -100,14 +101,15 @@ function App() {
         delete tasks[blockID]                               // удаление данных их реального стейта а не из виртуального
         setTasks({...tasks})
     }
-    function changeTaskTitle(blockID: string, taskId: string, title: string) {
-        const todoListTasks = tasks[blockID]
-        const task: TaskType | undefined = todoListTasks.find(t => t.id === taskId)
-        if (task) {
-            task.title = title
-            setTasks({...tasks})
+    function changeBlockFilter(blockID: string, newFilterValue:FilterValuesType) {
+
+        const block = blocks.find(tl => tl.id === blockID) // достаём блок по id и меняем фильтр
+        if (block) {
+            block.filter = newFilterValue
+            setBlocks([...blocks])
         }
     }
+
     function changeBlockTitle(blockID: string, title: string){
         const block =  blocks.find(b=>b.id===blockID)
         if(block){

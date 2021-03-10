@@ -1,7 +1,6 @@
-import {BlockType, FilterValuesType, TaskStateType, TaskType} from "../App";
+import {TaskStateType, TaskType} from "../App";
 import {v1} from "uuid";
-import React, {useState} from 'react';
-import {AddBlockActiontype, RemoveBlockActiontype} from "./todolist-reducer";
+import {AddBlockActiontype, block1, block2, block3, RemoveBlockActiontype} from "./block-reducer";
 
 type addTaskActionType = { type: "ADD-TASK",blockID: string, title: string }
 type removeTaskActionType = { type: "REMOVE-TASK", blockID: string, taskId: string }
@@ -10,13 +9,36 @@ type changeTaskTitleActionType = { type: "CHANGE-TASK-TITLE", blockID: string, t
 
 type ActionsType = addTaskActionType | removeTaskActionType | changeTaskStatusActionType | changeTaskTitleActionType | AddBlockActiontype | RemoveBlockActiontype
 
-export const tasksReducer = (state: TaskStateType, action: ActionsType): TaskStateType  => {
+const initialState:TaskStateType = {
+    [block1]: [
+        {id: v1(), title: "HTML&CSS", isDone: true},
+        {id: v1(), title: "JS", isDone: true},
+        {id: v1(), title: "ReactJS", isDone: false},
+        {id: v1(), title: "Rest API", isDone: false},
+        {id: v1(), title: "GraphQL", isDone: false}
+    ],
+    [block2]: [
+        {id: v1(), title: "HTML&CSS", isDone: true},
+        {id: v1(), title: "JS", isDone: true},
+        {id: v1(), title: "ReactJS", isDone: false},
+        {id: v1(), title: "Rest API", isDone: false},
+        {id: v1(), title: "GraphQL", isDone: false}
+    ],
+    [block3]: [
+        {id: v1(), title: "HTML&CSS", isDone: true},
+        {id: v1(), title: "JS", isDone: true},
+        {id: v1(), title: "ReactJS", isDone: false},
+        {id: v1(), title: "Rest API", isDone: false},
+        {id: v1(), title: "GraphQL", isDone: false}
+    ]
+}
+
+export const tasksReducer = (state: TaskStateType = initialState, action: ActionsType): TaskStateType  => {
 
     switch (action.type) {
         case "ADD-TASK": {
             const stateCopy = {...state}
             const blockCopy = stateCopy[action.blockID]
-            const tasks = blockCopy
             const newTask: TaskType = {id: v1(), title: action.title, isDone: false}
 
             stateCopy[action.blockID] = [newTask, ...blockCopy]
@@ -63,7 +85,7 @@ export const tasksReducer = (state: TaskStateType, action: ActionsType): TaskSta
             delete stateCopy[action.blockID]
             return stateCopy
 
-        default: throw  new Error("wrong action")
+        default: return state
     }
 }
 

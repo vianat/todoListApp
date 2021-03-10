@@ -1,6 +1,5 @@
-import {BlockType, FilterValuesType, TaskStateType} from "../App";
+import {BlockType, FilterValuesType} from "../App";
 import {v1} from "uuid";
-import React, {useState} from 'react';
 
 export type AddBlockActiontype = { type: "ADD-BLOCK", title: string, id: string }
 export type RemoveBlockActiontype = { type: "REMOVE-BLOCK", blockID: string }
@@ -9,11 +8,17 @@ type ChangeBlockTitleActiontype = { type: "CHANGE-BLOCK-TITLE", blockID: string,
 
 type AllActionsType = AddBlockActiontype | RemoveBlockActiontype | ChangeBlockFilterActiontype | ChangeBlockTitleActiontype
 
-export const todolistReducer = (state: Array<BlockType>, action: AllActionsType): Array<BlockType> => {
+export let block1 = v1(), block2 = v1(), block3 = v1()
+const initialState:Array<BlockType> = [ // лок стейт для блоков
+    {id: block1, title: "first block ", filter: 'all'},
+    {id: block2, title: "second block ", filter: 'active'},
+    {id: block3, title: "third block ", filter: 'completed'}
+]
 
+export const blockReducer = (state: Array<BlockType> = initialState, action: AllActionsType): Array<BlockType> => {
     switch (action.type) {
 
-        case "ADD-BLOCK": return [...state, {id : action.id, title: action.title, filter: 'all'}]
+        case "ADD-BLOCK": return [{id : action.id, title: action.title, filter: 'all'}, ...state]
 
         case "REMOVE-BLOCK": return state.filter(b => b.id !== action.blockID);
 
@@ -27,19 +32,19 @@ export const todolistReducer = (state: Array<BlockType>, action: AllActionsType)
             if(oneblock){ oneblock.title = action.newTitle}
             return [...state]
 
-        default: throw  new Error("wrong action")
+        default: return state
     }
 }
 
-export const addBlock = (title: string): AddBlockActiontype => ({
+export const addBlockAC = (title: string): AddBlockActiontype => ({
     type: "ADD-BLOCK", title, id: v1()
 })
-export const removeBlock = (blockID: string): RemoveBlockActiontype => ({
+export const removeBlockAC = (blockID: string): RemoveBlockActiontype => ({
     type: "REMOVE-BLOCK", blockID
 })
-export const changeBlockFilter = (blockID: string, newFilter: FilterValuesType): ChangeBlockFilterActiontype => ({
+export const changeBlockFilterAC = (blockID: string, newFilter: FilterValuesType): ChangeBlockFilterActiontype => ({
     type: "CHANGE-BLOCK-FILTER", blockID, newFilter
 })
-export const changeBlockTitle = (blockID: string, newTitle: string): ChangeBlockTitleActiontype => ({
+export const changeBlockTitleAC = (blockID: string, newTitle: string): ChangeBlockTitleActiontype => ({
     type: "CHANGE-BLOCK-TITLE", blockID, newTitle
 })

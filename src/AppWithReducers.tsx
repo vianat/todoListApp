@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, {useReducer} from 'react';
 import './App.css';
 import {Todolist} from './components/TodoList';
 import {v1} from 'uuid';
 import AddItem from "./AddItem";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
+import {addBlockAC, changeBlockFilterAC, changeBlockTitleAC, removeBlockAC, blockReducer} from "./state/block-reducer";
+import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from "./state/tasks-reducer";
 
 export type TaskType = {
     id: string
@@ -21,16 +23,16 @@ export type TaskStateType = {
 }
 export type FilterValuesType = "all" | "active" | "completed";
 
-function App() {
+function AppWithReducers() {
 
     const block1 = v1(), block2 = v1(), block3 = v1()  // создаём блоки с id , что бы связать блок с тасками #32
 
-    const [blocks, setBlocks] = useState<Array<BlockType>>([ // лок стейт для блоков
+    const [blocks, dispatchToBlock] = useReducer(blockReducer, [ // лок стейт для блоков
         {id: block1, title: "first block ", filter: 'all'},
         {id: block2, title: "second block ", filter: 'active'},
         {id: block3, title: "third block ", filter: 'completed'}
     ])
-    const [tasks, setTasks] = useState<TaskStateType>({ // лок стейт для блок-тасков
+    const [tasks, dispatchToTasks] = useReducer(tasksReducer,{ // лок стейт для блок-тасков
         [block1]: [
             {id: v1(), title: "HTML&CSS", isDone: true},
             {id: v1(), title: "JS", isDone: true},
@@ -55,66 +57,39 @@ function App() {
     })
 
     function addTask     (blockID: string, title: string) {//добавляем block или task
-        let newTask: TaskType = {
-            id: v1(),
-            title: title,
-            isDone: false
-        };
-        const block = tasks[blockID]
-        tasks[blockID] = [newTask, ...block];
-        setTasks({...tasks});
+        const action = addTaskAC(blockID, title)
+        dispatchToTasks(action)
     }
-    function removeTask  (blockID: string, taskID: string) {        // удаляем таску в блоке
-        const blockCopy = tasks[blockID]                            // создаём копию блока по id
-        tasks[blockID] = blockCopy.filter(t => t.id !== taskID);    // меняем ориг.блок на блок c удалённой таской
-        setTasks({...tasks});                                 // сетаем копию ориг.блок
+    function removeTask  (blockID: string, taskID: string) {
+        const action = removeTaskAC(blockID, taskID)
+        dispatchToTasks(action)
     }
     function changeStatus(blockID: string, taskId: string, isDone: boolean) {
-        const todoListTasks = tasks[blockID]
-        const task: TaskType| undefined = todoListTasks.find(t => t.id === taskId)
-        if (task) {
-            task.isDone = isDone
-            setTasks({...tasks})
-        }
+        const action = changeTaskStatusAC(blockID, taskId, isDone)
+        dispatchToTasks(action)
     }
     function changeTaskTitle(blockID: string, taskId: string, title: string) {
-        const todoListTasks = tasks[blockID]
-        const task: TaskType | undefined = todoListTasks.find(t => t.id === taskId)
-        if (task) {
-            task.title = title
-            setTasks({...tasks})
-        }
+        const action = changeTaskTitleAC(blockID, taskId, title)
+        dispatchToTasks(action)
     }
 
     function addBlock(title: string){
-        const newBlockID = v1();
-        const newBlock:BlockType = {
-            id : newBlockID,
-            title: title,
-            filter: 'all'
-        }
-        setBlocks([newBlock, ...blocks])
-        setTasks({...tasks, [newBlockID]: []})
+        const action = addBlockAC(title)
+        dispatchToBlock(action)
+        dispatchToTasks(action)
     }
     function removeBlock (blockID: string){
-        setBlocks(blocks.filter(tdl => tdl.id !== blockID)) // удаляем бок и сэтаем стэйт
-        delete tasks[blockID]                               // удаление данных их реального стейта а не из виртуального
-        setTasks({...tasks})
+        const action = removeBlockAC(blockID)
+        dispatchToBlock(action)
+        dispatchToTasks(action)
     }
     function changeBlockFilter(blockID: string, newFilterValue:FilterValuesType) {
-
-        const block = blocks.find(tl => tl.id === blockID) // достаём блок по id и меняем фильтр
-        if (block) {
-            block.filter = newFilterValue
-            setBlocks([...blocks])
-        }
+        const action = changeBlockFilterAC(blockID, newFilterValue )
+        dispatchToBlock(action)
     }
     function changeBlockTitle(blockID: string, title: string){
-        const block =  blocks.find(b=>b.id===blockID)
-        if(block){
-            block.title = title
-            setTasks({...tasks})
-        }
+        const action = changeBlockTitleAC(blockID, title )
+        dispatchToBlock(action)
     }
 
     return (
@@ -171,4 +146,4 @@ function App() {
     );
 }
 
-export default App;
+export default AppWithReducers;

@@ -1,4 +1,4 @@
-import {addBlock, changeBlockFilter, changeBlockTitle, removeBlock, todolistReducer} from "./todolist-reducer";
+import {addBlockAC, changeBlockFilterAC, changeBlockTitleAC, removeBlockAC, blockReducer} from "./block-reducer";
 import {v1} from "uuid";
 import {useState} from 'react';
 import {BlockType} from "../App";
@@ -18,14 +18,14 @@ beforeEach(() => {
 
 test("add block", () => {
     const newTitle = "new Block"
-    const newState = todolistReducer(initialState, addBlock(newTitle))
+    const newState = blockReducer(initialState, addBlockAC(newTitle))
 
     expect(newState.length).toBe(4)
-    expect(newState[3].title).toBe(newTitle)
+    expect(newState[0].title).toBe(newTitle)
 })
 
 test("remove block", () => {
-    const newState = todolistReducer(initialState, removeBlock(block3))
+    const newState = blockReducer(initialState, removeBlockAC(block3))
 
     expect(newState[1].title).toBe("second block")
     expect(newState.length).toBe(2)
@@ -33,7 +33,7 @@ test("remove block", () => {
 
 test("change block filter", () => {
     const newFilter = "completed"
-    const newState = todolistReducer(initialState, changeBlockFilter(block3, newFilter))
+    const newState = blockReducer(initialState, changeBlockFilterAC(block3, newFilter))
 
     expect(newState[1].filter).toBe("active")
     expect(newState[2].filter).toBe(newFilter)
@@ -41,7 +41,7 @@ test("change block filter", () => {
 
 test("change block title", () => {
     const newTitle = "new title"
-    const newState = todolistReducer(initialState, changeBlockTitle(block3, newTitle))
+    const newState = blockReducer(initialState, changeBlockTitleAC(block3, newTitle))
 
     expect(newState[1].title).toBe("second block")
     expect(newState[2].title).toBe(newTitle)

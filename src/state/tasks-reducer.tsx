@@ -57,10 +57,12 @@ export const tasksReducer = (state: TaskStateType = initialState, action: Action
             const stateCopy = {...state}
             const blockCopy = stateCopy[action.blockID]
 
-            const oneTask = blockCopy.find(t => t.id === action.taskId)
-            if (oneTask){
-                oneTask.isDone = action.isDone
-            }
+            stateCopy[action.blockID] = blockCopy.map(
+                t => t.id === action.taskId
+                    ? {...t, isDone: action.isDone}
+                    : t
+            )
+
             return stateCopy
         }
 
@@ -68,10 +70,12 @@ export const tasksReducer = (state: TaskStateType = initialState, action: Action
             const stateCopy = {...state}
             const blockCopy = stateCopy[action.blockID]
 
-            const oneTask = blockCopy.find(t => t.id === action.taskId)
-            if (oneTask){
-                oneTask.title = action.title
-            }
+            stateCopy[action.blockID] = blockCopy.map(
+                t => t.id === action.taskId
+                    ? {...t, title: action.title}
+                    : t
+            )
+
             return stateCopy
         }
 

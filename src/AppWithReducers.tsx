@@ -56,23 +56,6 @@ function AppWithReducers() {
         ]
     })
 
-    function addTask     (blockID: string, title: string) {//добавляем block или task
-        const action = addTaskAC(blockID, title)
-        dispatchToTasks(action)
-    }
-    function removeTask  (blockID: string, taskID: string) {
-        const action = removeTaskAC(blockID, taskID)
-        dispatchToTasks(action)
-    }
-    function changeStatus(blockID: string, taskId: string, isDone: boolean) {
-        const action = changeTaskStatusAC(blockID, taskId, isDone)
-        dispatchToTasks(action)
-    }
-    function changeTaskTitle(blockID: string, taskId: string, title: string) {
-        const action = changeTaskTitleAC(blockID, taskId, title)
-        dispatchToTasks(action)
-    }
-
     function addBlock(title: string){
         const action = addBlockAC(title)
         dispatchToBlock(action)
@@ -90,6 +73,23 @@ function AppWithReducers() {
     function changeBlockTitle(blockID: string, title: string){
         const action = changeBlockTitleAC(blockID, title )
         dispatchToBlock(action)
+    }
+
+    function addTask     (blockID: string, title: string) {//добавляем block или task
+        const action = addTaskAC(blockID, title)
+        dispatchToTasks(action)
+    }
+    function removeTask  (blockID: string, taskID: string) {
+        const action = removeTaskAC(blockID, taskID)
+        dispatchToTasks(action)
+    }
+    function changeStatus(blockID: string, taskId: string, isDone: boolean) {
+        const action = changeTaskStatusAC(blockID, taskId, isDone)
+        dispatchToTasks(action)
+    }
+    function changeTaskTitle(blockID: string, taskId: string, title: string) {
+        const action = changeTaskTitleAC(blockID, taskId, title)
+        dispatchToTasks(action)
     }
 
     return (
@@ -123,10 +123,10 @@ function AppWithReducers() {
                                 <Grid item key={tdl.id}>
                                     <Paper elevation={2} style={{padding:"15px"}}>
                                         <Todolist
-                                            id={tdl.id}
-                                            title={tdl.title}
+                                            blockId={tdl.id}
+                                            blockTitle={tdl.title}
                                             tasks={taskForTodoList} // прокидываем тудулист данные
-                                            filter={tdl.filter}
+                                            blockFilter={tdl.filter}
                                             removeTask={removeTask}
                                             changeFilter={changeBlockFilter}
                                             addTask={addTask}

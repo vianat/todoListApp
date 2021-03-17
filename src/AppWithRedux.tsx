@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import './App.css';
 import {Todolist} from './components/TodoList';
 import AddItem from "./AddItem";
@@ -28,41 +28,40 @@ function AppWithRedux() {
 
     const dispatch = useDispatch()
     const blocks = useSelector<AppRootState, Array<BlockType>>(state=>state.blocks)
-    const tasks = useSelector<AppRootState, TaskStateType>(state=>state.tasks)
+    const tasks  = useSelector<AppRootState, TaskStateType>(state=>state.tasks)
 
-    function addTask     (blockID: string, title: string) {//добавляем block или task
-        const action = addTaskAC(blockID, title)
-        dispatch(action)
-    }
-    function removeTask  (blockID: string, taskID: string) {
-        const action = removeTaskAC(blockID, taskID)
-        dispatch(action)
-    }
-    function changeStatus(blockID: string, taskId: string, isDone: boolean) {
-        const action = changeTaskStatusAC(blockID, taskId, isDone)
-        dispatch(action)
-    }
-    function changeTaskTitle(blockID: string, taskId: string, title: string) {
-        const action = changeTaskTitleAC(blockID, taskId, title)
-        dispatch(action)
-    }
-
-    function addBlock(title: string){
+    const addBlock = useCallback((title: string) => {
         const action = addBlockAC(title)
         dispatch(action)
-    }
-    function removeBlock (blockID: string){
-        const action = removeBlockAC(blockID)
-        dispatch(action)
-    }
-    function changeBlockFilter(blockID: string, newFilterValue:FilterValuesType) {
+    }, [dispatch])
+    const removeBlock  = useCallback( (blockID: string) => {
+        dispatch(removeBlockAC(blockID))
+    }, [dispatch])
+    const changeBlockFilter = useCallback((blockID: string, newFilterValue:FilterValuesType) => {
         const action = changeBlockFilterAC(blockID, newFilterValue )
         dispatch(action)
-    }
-    function changeBlockTitle(blockID: string, title: string){
+    }, [dispatch])
+    const changeBlockTitle = useCallback((blockID: string, title: string) => {
         const action = changeBlockTitleAC(blockID, title )
         dispatch(action)
-    }
+    }, [dispatch])
+
+    const addTask = useCallback((blockID: string, title: string) => {
+        const action = addTaskAC(blockID, title)
+        dispatch(action)
+    }, [dispatch])
+    const removeTask = useCallback((blockID: string, taskID: string) => {
+        const action = removeTaskAC(blockID, taskID)
+        dispatch(action)
+    }, [dispatch])
+    const changeStatus = useCallback((blockID: string, taskId: string, isDone: boolean) => {
+        const action = changeTaskStatusAC(blockID, taskId, isDone)
+        dispatch(action)
+    }, [dispatch])
+    const changeTaskTitle = useCallback((blockID: string, taskId: string, title: string) => {
+        const action = changeTaskTitleAC(blockID, taskId, title)
+        dispatch(action)
+    }, [dispatch])
 
     return (
         <div className="App">
@@ -86,19 +85,17 @@ function AppWithRedux() {
 
                 <Grid container spacing={4}>
                     {
-                        blocks.map(tdl => {                     // фильтруем по корневым блокам
-                            let taskForTodoList = tasks[tdl.id] // фильтруем блоки и устанавливам фильтры
-                            if(tdl.filter === "active")   {taskForTodoList = tasks[tdl.id].filter(t => t.isDone === false)}
-                            if(tdl.filter === "completed"){taskForTodoList = tasks[tdl.id].filter(t => t.isDone === true)}
+                        blocks.map(blk => {                     // фильтруем по корневым блокам
+                            let taskForBlock = tasks[blk.id] // фильтруем блоки и устанавливам фильтры
 
                             return (
-                                <Grid item key={tdl.id}>
+                                <Grid item key={blk.id}>
                                     <Paper elevation={2} style={{padding:"15px"}}>
                                         <Todolist
-                                            id={tdl.id}
-                                            title={tdl.title}
-                                            tasks={taskForTodoList} // прокидываем тудулист данные
-                                            filter={tdl.filter}
+                                            blockId={blk.id}
+                                            blockTitle={blk.title}
+                                            tasks={taskForBlock} // прокидываем тудулист данные
+                                            blockFilter={blk.filter}
                                             removeTask={removeTask}
                                             changeFilter={changeBlockFilter}
                                             addTask={addTask}

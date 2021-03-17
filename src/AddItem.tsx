@@ -5,7 +5,7 @@ type AddItemPropsType = {
     addItem: (title: string) => void
 }
 
-function AddItem(props: AddItemPropsType) {
+const AddItem = React.memo((props: AddItemPropsType) => {
 
     let [title, setTitle] = useState("")
     let [error, setError] = useState<string | null>(null)
@@ -20,7 +20,7 @@ function AddItem(props: AddItemPropsType) {
     }
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => setTitle(e.currentTarget.value)
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(null);
+        if (error !== null) setError(null);
         if (e.key === "Enter") {
             addItem();
         }
@@ -40,6 +40,6 @@ function AddItem(props: AddItemPropsType) {
             <Button onClick={addItem} variant={"contained"} color={"default"} style={{margin:"15px"}}>+</Button>
         </div>
     )
-}
+})
 
 export default AddItem

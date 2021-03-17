@@ -148,10 +148,10 @@ function App() {
                                 <Grid item key={tdl.id}>
                                     <Paper elevation={2} style={{padding:"15px"}}>
                                         <Todolist
-                                            id={tdl.id}
-                                            title={tdl.title}
+                                            blockId={tdl.id}
+                                            blockTitle={tdl.title}
                                             tasks={taskForTodoList} // прокидываем тудулист данные
-                                            filter={tdl.filter}
+                                            blockFilter={tdl.filter}
                                             removeTask={removeTask}
                                             changeFilter={changeBlockFilter}
                                             addTask={addTask}

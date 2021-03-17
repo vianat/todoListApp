@@ -9,7 +9,7 @@ type ChangeBlockTitleActiontype = { type: "CHANGE-BLOCK-TITLE", blockID: string,
 type AllActionsType = AddBlockActiontype | RemoveBlockActiontype | ChangeBlockFilterActiontype | ChangeBlockTitleActiontype
 
 export let block1 = v1(), block2 = v1(), block3 = v1()
-const initialState:Array<BlockType> = [ // лок стейт для блоков
+const initialState:Array<BlockType> = [
     {id: block1, title: "first block ", filter: 'all'},
     {id: block2, title: "second block ", filter: 'active'},
     {id: block3, title: "third block ", filter: 'completed'}

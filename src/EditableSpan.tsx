@@ -1,11 +1,11 @@
 import React, {ChangeEvent, useState} from 'react';
 import {TextField} from "@material-ui/core";
 
-type EditableSpanPropsType = {
+export type EditableSpanPropsType = {
     title: string
     changeItem:(title: string) => void
 }
-const EditableSpan = React.memo((props: EditableSpanPropsType) => {
+export const EditableSpan = React.memo((props: EditableSpanPropsType) => {
 
     const [title, setTitle] = useState<string>(props.title)
     const [editMode, setEditMode] = useState<boolean>(false)
@@ -24,5 +24,3 @@ const EditableSpan = React.memo((props: EditableSpanPropsType) => {
             : <span onDoubleClick={onEditMode}>{props.title}</span>
     );
 })
-
-export default EditableSpan;

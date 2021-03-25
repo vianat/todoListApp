@@ -1,11 +1,11 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
 import {Button, TextField} from "@material-ui/core";
 
-type AddItemPropsType = {
+export type AddItemPropsType = {
     addItem: (title: string) => void
 }
 
-const AddItem = React.memo((props: AddItemPropsType) => {
+export const AddItem = React.memo((props: AddItemPropsType) => {
 
     let [title, setTitle] = useState("")
     let [error, setError] = useState<string | null>(null)
@@ -41,5 +41,3 @@ const AddItem = React.memo((props: AddItemPropsType) => {
         </div>
     )
 })
-
-export default AddItem

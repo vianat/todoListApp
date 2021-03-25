@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import './App.css';
 import {Todolist} from './components/TodoList';
-import AddItem from "./AddItem";
+import {AddItem} from "./AddItem";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
 import {addBlockAC, changeBlockFilterAC, changeBlockTitleAC, removeBlockAC} from "./state/block-reducer";
@@ -24,7 +24,7 @@ export type TaskStateType = {
 }
 export type FilterValuesType = "all" | "active" | "completed";
 
-function AppWithRedux() {
+export function AppWithRedux() {
 
     const dispatch = useDispatch()
     const blocks = useSelector<AppRootState, Array<BlockType>>(state=>state.blocks)
@@ -114,5 +114,3 @@ function AppWithRedux() {
         </div>
     );
 }
-
-export default AppWithRedux;

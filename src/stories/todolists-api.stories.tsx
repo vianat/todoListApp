@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {todolistAPI} from "../api/todolist-api";
+import {TaskStatuses, todolistAPI} from "../api/todolist-api";
 
 export default {
     title: 'API'
@@ -126,8 +126,7 @@ export const UpdateTask = () => {
         const patchModel = {
             title: title,
             description: "string",
-            isDone: false,
-            status: 55,
+            status: TaskStatuses.New,
             priority: 55,
             startDate: "2021-03-07T16:47:48.847",
             deadline: "2021-07-07T16:47:48.847"

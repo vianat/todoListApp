@@ -1,35 +1,51 @@
-import {TaskStateType, TaskType} from "../App";
+import {TaskStateType} from "../App";
 import {v1} from "uuid";
 import {AddBlockActiontype, block1, block2, block3, RemoveBlockActiontype} from "./block-reducer";
+import {TaskPriorities, TaskStatuses, TaskType} from "../api/todolist-api";
 
 type addTaskActionType = { type: "ADD-TASK",blockID: string, title: string }
 type removeTaskActionType = { type: "REMOVE-TASK", blockID: string, taskId: string }
-type changeTaskStatusActionType = { type: "CHANGE-TASK-STATUS", blockID: string, taskId: string, isDone: boolean }
+type changeTaskStatusActionType = { type: "CHANGE-TASK-STATUS", blockID: string, taskId: string, status: TaskStatuses }
 type changeTaskTitleActionType = { type: "CHANGE-TASK-TITLE", blockID: string, taskId: string, title: string }
 
 type ActionsType = addTaskActionType | removeTaskActionType | changeTaskStatusActionType | changeTaskTitleActionType | AddBlockActiontype | RemoveBlockActiontype
 
-const initialState:TaskStateType = {
+const initialState: TaskStateType = {
     [block1]: [
-        {id: v1(), title: "HTML&CSS", isDone: true},
-        {id: v1(), title: "JS", isDone: true},
-        {id: v1(), title: "ReactJS", isDone: false},
-        {id: v1(), title: "Rest API", isDone: false},
-        {id: v1(), title: "GraphQL", isDone: false}
+        {id: v1(), title: "HTML&CSS", status: TaskStatuses.Complited, todoListId : block1, description : "",
+    priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "JS", status: TaskStatuses.Complited, todoListId : block1, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "ReactJS", status: TaskStatuses.New, todoListId : block1, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "Rest API", status: TaskStatuses.New, todoListId : block1, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "GraphQL", status: TaskStatuses.New, todoListId : block1, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
     ],
     [block2]: [
-        {id: v1(), title: "HTML&CSS", isDone: true},
-        {id: v1(), title: "JS", isDone: true},
-        {id: v1(), title: "ReactJS", isDone: false},
-        {id: v1(), title: "Rest API", isDone: false},
-        {id: v1(), title: "GraphQL", isDone: false}
+        {id: v1(), title: "HTML&CSS", status: TaskStatuses.Complited, todoListId : block2, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "JS", status: TaskStatuses.Complited, todoListId : block2, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "ReactJS", status: TaskStatuses.New, todoListId : block2, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "Rest API", status: TaskStatuses.New, todoListId : block2, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "GraphQL", status: TaskStatuses.New, todoListId : block2, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
     ],
     [block3]: [
-        {id: v1(), title: "HTML&CSS", isDone: true},
-        {id: v1(), title: "JS", isDone: true},
-        {id: v1(), title: "ReactJS", isDone: false},
-        {id: v1(), title: "Rest API", isDone: false},
-        {id: v1(), title: "GraphQL", isDone: false}
+        {id: v1(), title: "HTML&CSS", status: TaskStatuses.Complited, todoListId : block3, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "JS", status: TaskStatuses.Complited, todoListId : block3, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "ReactJS", status: TaskStatuses.New, todoListId : block3, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "Rest API", status: TaskStatuses.New, todoListId : block3, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+        {id: v1(), title: "GraphQL", status: TaskStatuses.New, todoListId : block3, description : "",
+            priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
     ]
 }
 
@@ -39,7 +55,9 @@ export const tasksReducer = (state: TaskStateType = initialState, action: Action
         case "ADD-TASK": {
             const stateCopy = {...state}
             const blockCopy = stateCopy[action.blockID]
-            const newTask: TaskType = {id: v1(), title: action.title, isDone: false}
+            const newTask: TaskType = {id: v1(), title: action.title, status: TaskStatuses.New,
+                todoListId : action.blockID, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
 
             stateCopy[action.blockID] = [newTask, ...blockCopy]
             return stateCopy
@@ -59,7 +77,7 @@ export const tasksReducer = (state: TaskStateType = initialState, action: Action
 
             stateCopy[action.blockID] = blockCopy.map(
                 t => t.id === action.taskId
-                    ? {...t, isDone: action.isDone}
+                    ? {...t, isDone: action.status}
                     : t
             )
 
@@ -99,8 +117,8 @@ export const addTaskAC = (blockID: string, title: string): addTaskActionType => 
 export const removeTaskAC = (blockID: string, taskId: string): removeTaskActionType => ({
     type: "REMOVE-TASK", blockID, taskId
 });
-export const changeTaskStatusAC = (blockID: string, taskId: string, isDone: boolean): changeTaskStatusActionType => ({
-    type: "CHANGE-TASK-STATUS", blockID, taskId, isDone
+export const changeTaskStatusAC = (blockID: string, taskId: string, status: TaskStatuses): changeTaskStatusActionType => ({
+    type: "CHANGE-TASK-STATUS", blockID, taskId, status
 });
 export const changeTaskTitleAC = (blockID: string, taskId: string, title: string): changeTaskTitleActionType => ({
     type: "CHANGE-TASK-TITLE", blockID, taskId, title

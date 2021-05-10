@@ -1,10 +1,11 @@
 import React, {ChangeEvent, useCallback} from 'react';
-import {FilterValuesType, TaskType} from './../App';
 import {AddItem} from "../AddItem";
 import {EditableSpan} from "../EditableSpan";
 import {Button, Checkbox, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 import {Task} from "./Task";
+import {FilterValuesType} from "../state/block-reducer";
+import {TaskStatuses, TaskType} from "../api/todolist-api";
 
 type TodolistPropsType = {
     blockId: string
@@ -15,7 +16,7 @@ type TodolistPropsType = {
     addTask: (blockID: string, title: string) => void
     removeTask: (blockID: string, taskId: string) => void
     changeFilter: (blockID: string, value: FilterValuesType) => void
-    changeStatus: (blockID: string, taskId: string, isDone: boolean) => void
+    changeStatus: (blockID: string, taskId: string, status: TaskStatuses) => void
     removeBlock:(blockID: string) => void
     changeTaskTitle: (blockID: string, taskId: string, title: string) => void
     changeBlockTitle: (blockID: string, title: string) => void
@@ -31,8 +32,8 @@ export const Todolist = React.memo((props: TodolistPropsType) => {
     const changeBlockTitle = useCallback((title: string) => props.changeBlockTitle(props.blockId, title),[props.blockId, props.changeBlockTitle])
 
     let tasksForBlock = props.tasks
-    if(props.blockFilter === "active")   {tasksForBlock = tasksForBlock.filter(t => t.isDone === false)}
-    if(props.blockFilter === "completed"){tasksForBlock = tasksForBlock.filter(t => t.isDone === true)}
+    if(props.blockFilter === "active")   {tasksForBlock = tasksForBlock.filter(t => t.status === TaskStatuses.New)}
+    if(props.blockFilter === "completed"){tasksForBlock = tasksForBlock.filter(t => t.status === TaskStatuses.Complited)}
 
     return <div>
         <h3>

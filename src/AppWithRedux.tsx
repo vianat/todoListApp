@@ -4,21 +4,18 @@ import {Todolist} from './components/TodoList';
 import {AddItem} from "./AddItem";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
-import {addBlockAC, changeBlockFilterAC, changeBlockTitleAC, removeBlockAC} from "./state/block-reducer";
+import {
+    addBlockAC,
+    changeBlockFilterAC,
+    changeBlockTitleAC,
+    removeBlockAC,
+    TodolistTypeDomainType
+} from "./state/block-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "./state/tasks-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
+import {TaskStatuses, TaskType} from "./api/todolist-api";
 
-export type TaskType = {
-    id: string
-    title: string
-    isDone: boolean
-}
-export type BlockType = {
-    id: string
-    title: string
-    filter: FilterValuesType
-}
 export type TaskStateType = {
     [key: string]: Array<TaskType>
 }
@@ -27,7 +24,7 @@ export type FilterValuesType = "all" | "active" | "completed";
 export function AppWithRedux() {
 
     const dispatch = useDispatch()
-    const blocks = useSelector<AppRootState, Array<BlockType>>(state=>state.blocks)
+    const blocks = useSelector<AppRootState, Array<TodolistTypeDomainType>>(state=>state.blocks)
     const tasks  = useSelector<AppRootState, TaskStateType>(state=>state.tasks)
 
     const addBlock = useCallback((title: string) => {
@@ -54,8 +51,8 @@ export function AppWithRedux() {
         const action = removeTaskAC(blockID, taskID)
         dispatch(action)
     }, [dispatch])
-    const changeStatus = useCallback((blockID: string, taskId: string, isDone: boolean) => {
-        const action = changeTaskStatusAC(blockID, taskId, isDone)
+    const changeStatus = useCallback((blockID: string, taskId: string, status: TaskStatuses) => {
+        const action = changeTaskStatusAC(blockID, taskId, status)
         dispatch(action)
     }, [dispatch])
     const changeTaskTitle = useCallback((blockID: string, taskId: string, title: string) => {

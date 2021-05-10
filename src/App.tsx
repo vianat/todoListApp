@@ -2,63 +2,50 @@ import React, {useState} from 'react';
 import './App.css';
 import {Todolist} from './components/TodoList';
 import {v1} from 'uuid';
-import AddItem from "./AddItem";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
+import {AddItem} from "./AddItem";
+import {FilterValuesType, TodolistTypeDomainType} from "./state/block-reducer";
+import {TaskPriorities, TaskStatuses, TaskType, TodolistType} from "./api/todolist-api";
 
-export type TaskType = {
-    id: string
-    title: string
-    isDone: boolean
-}
-export type BlockType = {
-    id: string
-    title: string
-    filter: FilterValuesType
-}
 export type TaskStateType = {
     [key: string]: Array<TaskType>
 }
-export type FilterValuesType = "all" | "active" | "completed";
 
 function App() {
 
     const block1 = v1(), block2 = v1(), block3 = v1()  // создаём блоки с id , что бы связать блок с тасками #32
 
-    const [blocks, setBlocks] = useState<Array<BlockType>>([ // лок стейт для блоков
-        {id: block1, title: "first block ", filter: 'all'},
-        {id: block2, title: "second block ", filter: 'active'},
-        {id: block3, title: "third block ", filter: 'completed'}
+    const [blocks, setBlocks] = useState<Array<TodolistTypeDomainType>>([ // лок стейт для блоков
+        {id: block1, title: "first block ", filter: 'all', order: 0, addedDate: ""},
+        {id: block2, title: "second block ", filter: 'active', order: 0, addedDate: ""},
+        {id: block3, title: "third block ", filter: 'completed', order: 0, addedDate: ""}
     ])
     const [tasks, setTasks] = useState<TaskStateType>({ // лок стейт для блок-тасков
         [block1]: [
-            {id: v1(), title: "HTML&CSS", isDone: true},
-            {id: v1(), title: "JS", isDone: true},
-            {id: v1(), title: "ReactJS", isDone: false},
-            {id: v1(), title: "Rest API", isDone: false},
-            {id: v1(), title: "GraphQL", isDone: false}
+            {id: v1(), title: "HTML&CSS", status: TaskStatuses.Complited, todoListId : block1, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: v1(), title: "ReactJS", status: TaskStatuses.New,todoListId : block1, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
         ],
         [block2]: [
-            {id: v1(), title: "HTML&CSS", isDone: true},
-            {id: v1(), title: "JS", isDone: true},
-            {id: v1(), title: "ReactJS", isDone: false},
-            {id: v1(), title: "Rest API", isDone: false},
-            {id: v1(), title: "GraphQL", isDone: false}
+            {id: v1(), title: "HTML&CSS", status: TaskStatuses.Complited, todoListId : block2, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: v1(), title: "ReactJS", status: TaskStatuses.New,todoListId : block2, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
         ],
         [block3]: [
-            {id: v1(), title: "HTML&CSS", isDone: true},
-            {id: v1(), title: "JS", isDone: true},
-            {id: v1(), title: "ReactJS", isDone: false},
-            {id: v1(), title: "Rest API", isDone: false},
-            {id: v1(), title: "GraphQL", isDone: false}
+            {id: v1(), title: "HTML&CSS", status: TaskStatuses.Complited, todoListId : block3, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: v1(), title: "ReactJS", status: TaskStatuses.New,todoListId : block3, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
         ]
     })
 
-    function addTask     (blockID: string, title: string) {//добавляем block или task
+    function addTask (blockID: string, title: string) {//добавляем block или task
         let newTask: TaskType = {
-            id: v1(),
-            title: title,
-            isDone: false
+            id: v1(), title: title, status: TaskStatuses.New, todoListId: blockID, description: "",
+            priority: TaskPriorities.Low, startDate: "", deadline: "", order: 0, addedDate: ""
         };
         const block = tasks[blockID]
         tasks[blockID] = [newTask, ...block];
@@ -69,11 +56,11 @@ function App() {
         tasks[blockID] = blockCopy.filter(t => t.id !== taskID);    // меняем ориг.блок на блок c удалённой таской
         setTasks({...tasks});                                 // сетаем копию ориг.блок
     }
-    function changeStatus(blockID: string, taskId: string, isDone: boolean) {
+    function changeStatus(blockID: string, taskId: string, status: TaskStatuses) {
         const todoListTasks = tasks[blockID]
         const task: TaskType| undefined = todoListTasks.find(t => t.id === taskId)
         if (task) {
-            task.isDone = isDone
+            task.status = status
             setTasks({...tasks})
         }
     }
@@ -88,10 +75,10 @@ function App() {
 
     function addBlock(title: string){
         const newBlockID = v1();
-        const newBlock:BlockType = {
+        const newBlock:TodolistTypeDomainType = {
             id : newBlockID,
             title: title,
-            filter: 'all'
+            filter: 'all', order: 0, addedDate: ""
         }
         setBlocks([newBlock, ...blocks])
         setTasks({...tasks, [newBlockID]: []})
@@ -101,7 +88,7 @@ function App() {
         delete tasks[blockID]                               // удаление данных их реального стейта а не из виртуального
         setTasks({...tasks})
     }
-    function changeBlockFilter(blockID: string, newFilterValue:FilterValuesType) {
+    function changeBlockFilter(blockID: string, newFilterValue: FilterValuesType) {
 
         const block = blocks.find(tl => tl.id === blockID) // достаём блок по id и меняем фильтр
         if (block) {
@@ -141,8 +128,8 @@ function App() {
                     {
                         blocks.map(tdl => {                     // фильтруем по корневым блокам
                             let taskForTodoList = tasks[tdl.id] // фильтруем блоки и устанавливам фильтры
-                            if(tdl.filter === "active")   {taskForTodoList = tasks[tdl.id].filter(t => t.isDone === false)}
-                            if(tdl.filter === "completed"){taskForTodoList = tasks[tdl.id].filter(t => t.isDone === true)}
+                            if(tdl.filter === "active")   {taskForTodoList = tasks[tdl.id].filter(t => t.status === TaskStatuses.New)}
+                            if(tdl.filter === "completed"){taskForTodoList = tasks[tdl.id].filter(t => t.status === TaskStatuses.Complited)}
 
                             return (
                                 <Grid item key={tdl.id}>

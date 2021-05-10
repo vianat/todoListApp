@@ -2,6 +2,7 @@ import {v1} from "uuid";
 import {TaskStateType} from "../App";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from "./tasks-reducer";
 import {addBlockAC, removeBlockAC} from "./block-reducer";
+import {TaskPriorities, TaskStatuses} from "../api/todolist-api";
 
 let initialState: TaskStateType;
 let block1: string, block2: string, block3: string
@@ -11,18 +12,28 @@ beforeEach(() => {
 
     initialState = {
         [block1]: [
-            {id: "1", title: "HTML&CSS", isDone: true},
-            {id: "2", title: "ReactJS", isDone: true},
-            {id: "3", title: "SQL", isDone: false},
-            {id: "4", title: "Rest API", isDone: false},
-            {id: "5", title: "GraphQL", isDone: false}
+            {id: "1", title: "HTML&CSS", status: TaskStatuses.Complited, todoListId : block1, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: "2", title: "ReactJS", status: TaskStatuses.Complited, todoListId : block1, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: "3", title: "SQL", status: TaskStatuses.New, todoListId : block1, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: "4", title: "Rest API", status: TaskStatuses.New, todoListId : block1, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: "5", title: "GraphQL", status: TaskStatuses.New, todoListId : block1, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
         ],
         [block2]: [
-            {id: "1", title: "HTML&CSS", isDone: true},
-            {id: "2", title: "JS", isDone: true},
-            {id: "3", title: "ReactJS", isDone: false},
-            {id: "4", title: "Rest API", isDone: false},
-            {id: "5", title: "GraphQL", isDone: false}
+            {id: "1", title: "HTML&CSS", status: TaskStatuses.Complited, todoListId : block2, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: "2", title: "JS", status: TaskStatuses.Complited, todoListId : block2, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: "3", title: "ReactJS", status: TaskStatuses.New, todoListId : block2, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: "4", title: "Rest API", status: TaskStatuses.New, todoListId : block2, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""},
+            {id: "5", title: "GraphQL", status: TaskStatuses.New, todoListId : block2, description : "",
+                priority: TaskPriorities.Low, startDate : "", deadline : "", order : 0, addedDate : ""}
         ]
     }
 })
@@ -43,10 +54,10 @@ test("remove task", () => {
 })
 
 test("change task status", () => {
-    const newState = tasksReducer(initialState, changeTaskStatusAC(block2, "2", false))
+    const newState = tasksReducer(initialState, changeTaskStatusAC(block2, "2", TaskStatuses.Complited))
 
-    expect(newState[block1][1].isDone).toBe(true)
-    expect(newState[block2][1].isDone).toBe(false)
+    expect(newState[block1][1].status).toBe(TaskStatuses.Complited)
+    expect(newState[block2][1].status).toBe(TaskStatuses.New)
 })
 
 test("change task title", () => {

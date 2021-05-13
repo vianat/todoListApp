@@ -1,7 +1,12 @@
-import {addBlockAC, changeBlockFilterAC, changeBlockTitleAC, removeBlockAC, blockReducer} from "./block-reducer";
+import {
+    addBlockAC,
+    changeBlockFilterAC,
+    changeBlockTitleAC,
+    removeBlockAC,
+    blockReducer,
+    setBlocksAC
+} from "./block-reducer";
 import {v1} from "uuid";
-import {useState} from 'react';
-import {BlockType} from "../App";
 
 let initialState: any;
 let block1: string, block2: string, block3: string
@@ -45,4 +50,11 @@ test("change block title", () => {
 
     expect(newState[1].title).toBe("second block")
     expect(newState[2].title).toBe(newTitle)
+})
+
+test("blocks should are set", () => {
+    const action = setBlocksAC(initialState)
+    const endState = blockReducer([], action)
+
+    expect(endState.length).toBe(3)
 })

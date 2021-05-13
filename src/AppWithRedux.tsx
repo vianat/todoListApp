@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {Todolist} from './components/TodoList';
 import {AddItem} from "./AddItem";
@@ -7,14 +7,14 @@ import {Menu} from "@material-ui/icons";
 import {
     addBlockAC,
     changeBlockFilterAC,
-    changeBlockTitleAC,
-    removeBlockAC,
+    changeBlockTitleAC, fetchTodolistsTHUNKCREATOR,
+    removeBlockAC, setBlocksAC,
     TodolistTypeDomainType
 } from "./state/block-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "./state/tasks-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
-import {TaskStatuses, TaskType} from "./api/todolist-api";
+import {TaskStatuses, TaskType, todolistAPI} from "./api/todolist-api";
 
 export type TaskStateType = {
     [key: string]: Array<TaskType>
@@ -26,6 +26,10 @@ export function AppWithRedux() {
     const dispatch = useDispatch()
     const blocks = useSelector<AppRootState, Array<TodolistTypeDomainType>>(state=>state.blocks)
     const tasks  = useSelector<AppRootState, TaskStateType>(state=>state.tasks)
+
+    useEffect(() => {
+        dispatch(fetchTodolistsTHUNKCREATOR)
+    }, [])
 
     const addBlock = useCallback((title: string) => {
         const action = addBlockAC(title)

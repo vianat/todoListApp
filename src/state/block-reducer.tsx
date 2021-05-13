@@ -1,12 +1,15 @@
 import {v1} from "uuid";
-import {TodolistType} from "../api/todolist-api";
+import {todolistAPI, TodolistType} from "../api/todolist-api";
+import {Dispatch} from "react";
+import {useDispatch} from "react-redux";
 
 export type AddBlockActiontype = { type: "ADD-BLOCK", title: string, id: string }
 export type RemoveBlockActiontype = { type: "REMOVE-BLOCK", blockID: string }
 type ChangeBlockFilterActiontype = { type: "CHANGE-BLOCK-FILTER", blockID: string, newFilter: FilterValuesType }
 type ChangeBlockTitleActiontype = { type: "CHANGE-BLOCK-TITLE", blockID: string, newTitle: string }
+export type SetBlockActionType = { type: "SET-BLOCKS", blocks: Array<TodolistType>}
 
-type AllActionsType = AddBlockActiontype | RemoveBlockActiontype | ChangeBlockFilterActiontype | ChangeBlockTitleActiontype
+type AllActionsType = AddBlockActiontype | RemoveBlockActiontype | ChangeBlockFilterActiontype | ChangeBlockTitleActiontype | SetBlockActionType
 export type FilterValuesType = "all" | "active" | "completed";
 export type TodolistTypeDomainType = TodolistType & {
     filter: FilterValuesType
@@ -17,7 +20,6 @@ const initialState:Array<TodolistTypeDomainType> = [
     {id: block2, title: "second block ", filter: 'active', order: 0, addedDate: ""},
     {id: block3, title: "third block ", filter: 'completed', order: 0, addedDate: ""}
 ]
-
 export const blockReducer = (state: Array<TodolistTypeDomainType> = initialState, action: AllActionsType): Array<TodolistTypeDomainType> => {
     switch (action.type) {
 
@@ -35,6 +37,13 @@ export const blockReducer = (state: Array<TodolistTypeDomainType> = initialState
             if(oneblock){ oneblock.title = action.newTitle}
             return [...state]
 
+        case "SET-BLOCKS": return action.blocks.map(tdl => {
+            return {
+                ...tdl,
+                filter: "all"
+            }
+        });
+
         default: return state
     }
 }
@@ -51,3 +60,14 @@ export const changeBlockFilterAC = (blockID: string, newFilter: FilterValuesType
 export const changeBlockTitleAC = (blockID: string, newTitle: string): ChangeBlockTitleActiontype => ({
     type: "CHANGE-BLOCK-TITLE", blockID, newTitle
 })
+export const setBlocksAC = (blocks: Array<TodolistType>): SetBlockActionType => ({
+    type: "SET-BLOCKS", blocks
+})
+export const fetchTodolistsTHUNKCREATOR = () => {
+    return (dispatch: any) => {
+        todolistAPI.getTodolists()
+            .then((res) => {
+                dispatch(setBlocksAC(res.data))
+            })
+    }
+}

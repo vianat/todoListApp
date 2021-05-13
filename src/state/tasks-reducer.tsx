@@ -1,14 +1,26 @@
 import {TaskStateType} from "../App";
 import {v1} from "uuid";
-import {AddBlockActiontype, block1, block2, block3, RemoveBlockActiontype} from "./block-reducer";
-import {TaskPriorities, TaskStatuses, TaskType} from "../api/todolist-api";
+import {
+    AddBlockActiontype,
+    block1,
+    block2,
+    block3,
+    RemoveBlockActiontype,
+    SetBlockActionType,
+    setBlocksAC
+} from "./block-reducer";
+import {TaskPriorities, TaskStatuses, TaskType, todolistAPI} from "../api/todolist-api";
 
 type addTaskActionType = { type: "ADD-TASK",blockID: string, title: string }
 type removeTaskActionType = { type: "REMOVE-TASK", blockID: string, taskId: string }
 type changeTaskStatusActionType = { type: "CHANGE-TASK-STATUS", blockID: string, taskId: string, status: TaskStatuses }
 type changeTaskTitleActionType = { type: "CHANGE-TASK-TITLE", blockID: string, taskId: string, title: string }
+type setTasksActionType = { type: "SET-TASKS", tasks: Array<TaskType>, blockId: string
+}
 
-type ActionsType = addTaskActionType | removeTaskActionType | changeTaskStatusActionType | changeTaskTitleActionType | AddBlockActiontype | RemoveBlockActiontype
+type ActionsType = addTaskActionType
+    | removeTaskActionType | changeTaskStatusActionType | changeTaskTitleActionType
+    | AddBlockActiontype | RemoveBlockActiontype | SetBlockActionType | setTasksActionType
 
 const initialState: TaskStateType = {
     [block1]: [
@@ -107,6 +119,22 @@ export const tasksReducer = (state: TaskStateType = initialState, action: Action
             delete stateCopy[action.blockID]
             return stateCopy
 
+        case "SET-BLOCKS":
+            let stateCopy2 = {...state}
+
+            action.blocks.forEach(tl => {
+                stateCopy2[tl.id] = []
+            })
+            console.log(stateCopy2)
+            console.log(typeof stateCopy2[0])
+            return stateCopy2
+
+        case "SET-TASKS":
+            let stateCopy3 = {...state}
+            stateCopy3[action.blockId] = action.tasks
+
+            return stateCopy3
+
         default: return state
     }
 }
@@ -123,3 +151,14 @@ export const changeTaskStatusAC = (blockID: string, taskId: string, status: Task
 export const changeTaskTitleAC = (blockID: string, taskId: string, title: string): changeTaskTitleActionType => ({
     type: "CHANGE-TASK-TITLE", blockID, taskId, title
 });
+export const setTasksAC = (tasks: Array<TaskType>, blockId: string): setTasksActionType => ({
+    type: "SET-TASKS", tasks, blockId
+});
+export const fetchTasksTHUNKCREATOR = (blockId: string) => {
+    return (dispatch: any) => {
+        todolistAPI.getTasks(blockId)
+            .then((res) => {
+                dispatch(setTasksAC(res.data.items, blockId))
+            })
+    }
+}

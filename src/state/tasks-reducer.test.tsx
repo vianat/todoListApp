@@ -1,7 +1,14 @@
 import {v1} from "uuid";
 import {TaskStateType} from "../App";
-import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from "./tasks-reducer";
-import {addBlockAC, removeBlockAC} from "./block-reducer";
+import {
+    addTaskAC,
+    changeTaskStatusAC,
+    changeTaskTitleAC,
+    removeTaskAC,
+    setTasksAC,
+    tasksReducer
+} from "./tasks-reducer";
+import {addBlockAC, removeBlockAC, setBlocksAC} from "./block-reducer";
 import {TaskPriorities, TaskStatuses} from "../api/todolist-api";
 
 let initialState: TaskStateType;
@@ -57,7 +64,7 @@ test("change task status", () => {
     const newState = tasksReducer(initialState, changeTaskStatusAC(block2, "2", TaskStatuses.Complited))
 
     expect(newState[block1][1].status).toBe(TaskStatuses.Complited)
-    expect(newState[block2][1].status).toBe(TaskStatuses.New)
+    expect(newState[block2][1].status).toBe(TaskStatuses.Complited)
 })
 
 test("change task title", () => {
@@ -94,6 +101,34 @@ test('property with todolistId should be deleted', () => {
 
     expect(keys.length).toBe(1);
     expect(endState[block2]).not.toBeDefined();
+});
+
+test('empty tasks should be added when we set todolists', () => {
+
+    const action = setBlocksAC([
+        {id: block1, title: "first block", order: 0, addedDate: ""},
+        {id: block2, title: "second block", order: 0, addedDate: ""}
+    ])
+
+    const endState = tasksReducer({}, action)
+
+    const keys = Object.keys(endState);
+
+    expect(endState[keys[0]]).toStrictEqual([]);
+    expect(endState[keys[1]]).toStrictEqual([]);
+});
+
+test('tasks should be added for todolist', () => {
+
+    const action = setTasksAC(initialState[block1], block1)
+
+    const endState = tasksReducer({
+        [block2]: [],
+        [block1]: []
+    }, action)
+
+    expect(endState[block1].length).toBe(5);
+    expect(endState[block2].length).toBe(0);
 });
 
 
